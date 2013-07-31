@@ -1,5 +1,5 @@
 # InternetSpaceships
-Repository to hold our experiments where we messing around with the Eve API
+Repository to hold our experiments where we mess around with the Eve API
 
 ## Resources
 This section contains links and URI's to useful development resources
