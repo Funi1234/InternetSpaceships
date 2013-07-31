@@ -10,18 +10,20 @@ import json
 import urllib
 from lxml import etree
 
+print "starting"
+
 # Get the XML from API
-tmpresponce = urllib.urlopen("https://api.eveonline.com/map/Sovereignty.xml.aspx")
+#tmpresponce = urllib.urlopen("https://api.eveonline.com/map/Sovereignty.xml.aspx")
 
 #XML To String
-resString = tmpresponce.read()
+#resString = tmpresponce.read()
 
 # Create XML Parser.
 parser = etree.XMLParser(remove_blank_text=True)
 # Parse String into XML Object
-responce = etree.XML(resString, parser)
+responce = etree.XML(urllib.urlopen("https://api.eveonline.com/map/Sovereignty.xml.aspx").read(), parser)
 
-print "starting"
+
 
 systemIDMap = {}
 
@@ -34,11 +36,11 @@ for row in rows[0]:
     
 
 # Print the system name for that ID
-print systemIDMap["30002768"]
+print systemIDMap["30000142"]
 
 # Print the ID for that system name
 for sysid, sys in systemIDMap.iteritems():
-    if sys.startswith("NOL") > 0:
+    if sys.startswith("Jita") > 0:
         print sysid
 
         
