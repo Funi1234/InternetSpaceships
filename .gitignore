@@ -1,0 +1,3 @@
+# Ignore VirtualEnv files.
+vENV/
+*.pyc
