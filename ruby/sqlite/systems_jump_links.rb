@@ -16,7 +16,7 @@ def solar_system_jumps(solar_system_id)
       system_array.push(row[3].to_s)
     end
 
-    return {:gate=>system_array}.to_json
+    return {:solarSystemID=>solar_system_id,:gate=>system_array}.to_json
 
   rescue SQLite3::Exception => e 
 	    
@@ -28,4 +28,24 @@ def solar_system_jumps(solar_system_id)
 end
 
 
-puts solar_system_jumps(30000142)
+def clean_duplicate_gate_jumps(solar_system_id)
+  
+  
+end
+
+
+gate_list_system = "30000142"
+
+puts "Retrieving the gates attached to: #{gate_list_system}\n\n"
+json = solar_system_jumps(gate_list_system)
+jita = JSON.parse(json)
+
+test = Array.new
+
+jita["gate"].each do |i|
+  puts i
+  system = solar_system_jumps(i)
+  parsedSystem = JSON.parse(system)
+  parsedSystem["gate"].delete(gate_list_system)
+  parsedSystem["gate"]
+end
