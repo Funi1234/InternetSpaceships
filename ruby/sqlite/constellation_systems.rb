@@ -13,6 +13,8 @@ def constellation_systems(constellation_id)
     rs.each do |row|
       #puts row.inspect
       system = {
+        :regionID=>row[0].to_s,
+        :constellationID=>row[1].to_s,
         :solar_system_id=>row[2].to_s,
         :name=>row[3].to_s,
         :x=>"%0.2f" % (row[4] / 1.0e+15).to_s,
