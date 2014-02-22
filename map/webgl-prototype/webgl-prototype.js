@@ -46,7 +46,7 @@ var customAttributes =
 };
 
 //lines
-var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4, linewidth: 0.1 } );
+var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4, linewidth: 1 } );
 
 
 for (var jump in jumps){
@@ -62,9 +62,6 @@ for (var jump in jumps){
 	
 	systemJumpGeo.vertices.push(new THREE.Vector3(fromx, fromy, fromz));
 	systemJumpGeo.vertices.push(new THREE.Vector3(tox, toy, toz));
-	
-	var line = new THREE.Line( systemJumpGeo,  linematerial );
-	scene.add(line);
 }
 
 
@@ -86,6 +83,10 @@ var systemMat = new THREE.ShaderMaterial (
 		alphaTest: 0.5
 	});
 
+
+var line = new THREE.Line( systemJumpGeo, linematerial, THREE.LinePieces );
+line.updateMatrix();
+scene.add( line );
 
 systemSystem = new THREE.ParticleSystem( systemSystemGeo, systemMat );
 systemSystem.sortParticles = true;
