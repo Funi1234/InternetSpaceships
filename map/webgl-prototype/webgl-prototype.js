@@ -33,7 +33,7 @@ var stats = new Stats();
 
 
 /////////////// Create Geometry ///////////////////
-var planetTexture = THREE.ImageUtils.loadTexture( 'particle.png' );
+var planetTexture = THREE.ImageUtils.loadTexture( 'images/disc.png' );
 var customUniforms =
 {
 	texture: {type: "t", value: planetTexture },
@@ -45,12 +45,11 @@ var customAttributes =
 };
 
 var v = 0;
-forgeData.forEach( function (system) {
-	
-	systemSystemGeo.vertices.push(new THREE.Vector3(Number(system.x) / scaleDivisor, Number(system.y) / scaleDivisor, Number(system.z) / scaleDivisor));
+for (var system in system_list){
+	systemSystemGeo.vertices.push(new THREE.Vector3(Number(system_list[system].x), Number(system_list[system].y), Number(system_list[system].z)));
 	customAttributes.customColor.value[ v ]	= new THREE.Color( v * 10000 );
 	v++;
-});
+}
 
  // systemMat = new THREE.ParticleBasicMaterial( {
 	// color: 0x57A5FF,
