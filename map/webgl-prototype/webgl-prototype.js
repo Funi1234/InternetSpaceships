@@ -2,6 +2,7 @@
 var rotateSpeed = 0.03;
 var scaleDivisor = Number("1e15");
 var systemSystemGeo = new THREE.Geometry();
+var systemJumpGeo = new THREE.Geometry();
 var systemSystem;
 
 /////////////// Create Objects ///////////////////
@@ -44,12 +45,35 @@ var customAttributes =
 	customColor: { type: "c", value: [] },
 };
 
+//lines
+var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4, linewidth: 0.1 } );
+
+
+for (var jump in jumps){
+	var jumpgeo = new THREE.Geometry();
+	var tox, toy, toz, fromx, fromy, fromz;
+	
+	fromx = system_list[jumps[jump][0]].x;
+	fromy = system_list[jumps[jump][0]].y;
+	fromz = system_list[jumps[jump][0]].z;
+	tox = system_list[jumps[jump][1]].x;
+	toy = system_list[jumps[jump][1]].y;
+	toz = system_list[jumps[jump][1]].z;
+	
+	jumpgeo.vertices.push(new THREE.Vector3(fromx, fromy, fromz));
+	jumpgeo.vertices.push(new THREE.Vector3(tox, toy, toz));
+	var line = new THREE.Line( jumpgeo,  linematerial );
+	scene.add(line);
+}
+
+
 var v = 0;
 for (var system in system_list){
 	systemSystemGeo.vertices.push(new THREE.Vector3(Number(system_list[system].x), Number(system_list[system].y), Number(system_list[system].z)));
 	customAttributes.customColor.value[ v ]	= new THREE.Color( v * 10000 );
 	v++;
 }
+
 
  // systemMat = new THREE.ParticleBasicMaterial( {
 	// color: 0x57A5FF,
