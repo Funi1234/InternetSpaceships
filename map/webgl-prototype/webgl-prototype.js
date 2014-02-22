@@ -50,7 +50,7 @@ var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4,
 
 
 for (var jump in jumps){
-	var jumpgeo = new THREE.Geometry();
+
 	var tox, toy, toz, fromx, fromy, fromz;
 	
 	fromx = system_list[jumps[jump][0]].x;
@@ -60,9 +60,10 @@ for (var jump in jumps){
 	toy = system_list[jumps[jump][1]].y;
 	toz = system_list[jumps[jump][1]].z;
 	
-	jumpgeo.vertices.push(new THREE.Vector3(fromx, fromy, fromz));
-	jumpgeo.vertices.push(new THREE.Vector3(tox, toy, toz));
-	var line = new THREE.Line( jumpgeo,  linematerial );
+	systemJumpGeo.vertices.push(new THREE.Vector3(fromx, fromy, fromz));
+	systemJumpGeo.vertices.push(new THREE.Vector3(tox, toy, toz));
+	
+	var line = new THREE.Line( systemJumpGeo,  linematerial );
 	scene.add(line);
 }
 
@@ -74,15 +75,6 @@ for (var system in system_list){
 	v++;
 }
 
-
- // systemMat = new THREE.ParticleBasicMaterial( {
-	// color: 0x57A5FF,
-	// size: 4,
-	// map: THREE.ImageUtils.loadTexture(
-	// 	"particle.png"
-	// ),
-	// transparent: true
-// });
 
 var systemMat = new THREE.ShaderMaterial (
 	{
