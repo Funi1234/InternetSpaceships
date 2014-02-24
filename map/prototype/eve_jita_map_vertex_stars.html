@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Eve Online Map Prototype</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+	<script src="three.min.js"></script>
+	<script src="stats.min.js"></script>
+
+	<script>
+
+	var stars=[
+	[353,145,213,"Unpas",0.1,20000018],
+	[107,301,241,"Urlen",0.04614,20000020],
+	[184,208,0,"Kisogo",0.2644,20000020],
+	[17,149,349,"Perimeter",0.04031,20000020],
+	[150,455,-70,"Sirppala",0.1,20000409],
+	[-81,348,-52,"Kusomonmon",0.1,20000411],
+	[732,-247,531,"Itamo",0.1,20000017],
+	[420,0,485,"Maurasi",0.1636,20000020],
+	[348,52,659,"Jita",1.692,20000020],
+	[385,908,883,"Muvolailen",0.1,20000407],
+	[140,108,585,"Ikuchi",0.1,20000019],
+	[0,187,436,"Niyabainen",0.2321,20000020],
+	[172,235,589,"New Caldari",0.04031,20000020],
+	[-147,699,1021,"Sobaseki",0.1,20000199],
+	[141,632,571,"Tunttaras",0.1,20000201],
+	[-209,-14,148,"Iyen-Oursta",0.1,20000387],
+	[238,71,523,"Hirtamon",0.1,20000019],
+	[1209,344,209,"Josameto",0.1,20000022],
+	[-62,1054,1245,"Malkalen",0.1,20000204],
+	[-58,481,1251,"Alikara",0.1,20000403]];
+
+	var jumps=[
+	[107,301,241,353,145,213],
+	[107,301,241,184,208,0],
+	[107,301,241,17,149,349],
+	[107,301,241,150,455,-70],
+	[107,301,241,-81,348,-52],
+	[420,0,485,732,-247,531],
+	[420,0,485,348,52,659],
+	[420,0,485,17,149,349],
+	[420,0,485,385,908,883],
+	[184,208,0,107,301,241],
+	[348,52,659,140,108,585],
+	[348,52,659,420,0,485],
+	[348,52,659,0,187,436],
+	[348,52,659,17,149,349],
+	[348,52,659,172,235,589],
+	[348,52,659,-147,699,1021],
+	[348,52,659,385,908,883],
+	[0,187,436,348,52,659],
+	[0,187,436,17,149,349],
+	[0,187,436,172,235,589],
+	[0,187,436,141,632,571],
+	[17,149,349,107,301,241],
+	[17,149,349,420,0,485],
+	[17,149,349,348,52,659],
+	[17,149,349,0,187,436],
+	[17,149,349,-209,-14,148],
+	[172,235,589,238,71,523],
+	[172,235,589,348,52,659],
+	[172,235,589,0,187,436],
+	[172,235,589,1209,344,209],
+	[172,235,589,-62,1054,1245],
+	[172,235,589,-58,481,1251]
+	];
+
+	constellation=20000020;// Edit this!
+
+	var container, stats, info;
+	var camera, scene, projector, renderer;
+	var particles = [];
+	var radius = 1500;
+	var theta = 0;
+	var PI2 = Math.PI * 2;
+
+	var mouse = { x: 0, y: 0 }, INTERSECTED;
+
+	function particleRender( context ) {	
+		// we get passed a reference to the canvas context
+		context.beginPath();
+		// and we just have to draw our shape at 0,0 - in this
+		// case an arc from 0 to 2Pi radians or 360º - a full circle!
+		context.arc( 0, 0, 1, 0,  Math.PI * 2, true );
+		context.fill();
+	};
+
+	var material = new THREE.ParticleCanvasMaterial( { color: 0xffffff, program: particleRender } );
+
+
+	init();
+	animate();
+
+
+	function init() {
+
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+
+		info = document.createElement( 'div' );
+		info.style.position = 'absolute';
+		info.style.top = '10px';
+		info.style.width = '100%';
+		info.style.textAlign = 'center';
+		info.style.color = "#ffffff";
+		info.innerHTML = 'Eve Online Map Prototype';
+		container.appendChild( info );
+
+		camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+		camera.position.set( 0, 0, 0 );
+
+		scene = new THREE.Scene();
+
+		for ( var star in stars ) {
+			color=stars[star][4] * 0xffffff;
+			if (stars[star][5] != constellation)
+			{
+				color=0x000000;
+			}
+
+			particle = new THREE.Particle( material );
+
+			particle.position.x = stars[star][0];
+			particle.position.y = stars[star][1];
+			particle.position.z = stars[star][2];
+			particle.name = stars[star][3];
+			particle.constellation = stars[star][5];
+			particle.scale.x = particle.scale.y = 25;
+			scene.add( particle );
+			particles.push(particle);
+		}
+
+		// lines
+		var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4, linewidth: 1 } );
+
+		for (var jump in jumps){
+			var geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(jumps[jump][0], jumps[jump][1], jumps[jump][2]));
+			geometry.vertices.push(new THREE.Vector3(jumps[jump][3], jumps[jump][4], jumps[jump][5]));
+			var line = new THREE.Line( geometry,  linematerial );
+			scene.add(line);
+		}
+
+		
+
+		projector = new THREE.Projector();
+
+		renderer = new THREE.CanvasRenderer();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+		container.appendChild( renderer.domElement );
+
+		stats = new Stats();
+		stats.domElement.style.position = 'absolute';
+		stats.domElement.style.top = '0px';
+		container.appendChild( stats.domElement );
+
+		document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+	//
+
+	window.addEventListener( 'resize', onWindowResize, false );
+
+}
+
+function onWindowResize() {
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+function onDocumentMouseMove( event ) {
+
+	event.preventDefault();
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+}
+
+//
+
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	render();
+	stats.update();
+
+}
+
+function render() {
+
+	// rotate camera
+
+	theta += 0.1;
+
+	camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+	camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+	camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+	camera.lookAt( scene.position );
+
+	// find intersections
+
+	camera.updateMatrixWorld();
+
+	var vector = new THREE.Vector3( mouse.x, mouse.y, 0.5 );
+	projector.unprojectVector( vector, camera );
+
+	var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+	var intersects = raycaster.intersectObjects( particles); //scene.children );
+
+	if ( intersects.length > 0 ) {
+
+		if ( INTERSECTED != intersects[ 0 ].object ) {
+			INTERSECTED = intersects[ 0 ].object;
+			console.log(INTERSECTED.name);
+			info.innerHTML = 'Eve Online Map Prototype ' + INTERSECTED.name;
+		}
+
+	} 
+	else {
+		INTERSECTED = null;
+	}
+
+	renderer.render( scene, camera );
+
+}
+		</script>
+	</body>
+</html>
