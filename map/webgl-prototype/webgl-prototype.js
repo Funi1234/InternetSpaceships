@@ -1,6 +1,5 @@
 /////////////// Set Variables //////////////////
 var rotateSpeed = 0.03;
-var scaleDivisor = Number("1e15");
 var systemSystemGeo = new THREE.Geometry();
 var systemJumpGeo = new THREE.Geometry();
 var systemSystem;
@@ -21,7 +20,6 @@ camera.rotation.x = -90;
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-
 
 //controls
 var control = new THREE.OrbitControls( camera, renderer.domElement );
@@ -116,7 +114,7 @@ function solarSystemColour(security)
 	var value = Number(security);
 	
 	if(value > 0.9){
-		return 0x0404B4; // 263348
+		return 0x0404B4;
 	}
 	else if (value < 0.9 && value >= 0.7){
 		return 0x04B404;
@@ -128,7 +126,7 @@ function solarSystemColour(security)
 		return 0xFE9A2E;
 	}
 	else if(value < 0.0){
-		return 0xFF0000; // 16711680
+		return 0xFF0000;
 	}
 
 }
