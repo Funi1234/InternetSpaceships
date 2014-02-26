@@ -20,7 +20,7 @@ def all_systems()
         :x=>"%0.2f" % (row[4] / 1.0e+15).to_s,
         :y=>"%0.2f" % (row[5] / 1.0e+15).to_s,
         :z=>"%0.2f" % (row[6] / 1.0e+15).to_s,
-        :security=>row[13].to_s
+        :security=>row[21].to_s
       }
       system_hash[system[:solarSystemID]] = system
     end

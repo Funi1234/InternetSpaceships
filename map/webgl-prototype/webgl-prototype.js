@@ -1,6 +1,5 @@
 /////////////// Set Variables //////////////////
 var rotateSpeed = 0.03;
-var scaleDivisor = Number("1e15");
 var systemSystemGeo = new THREE.Geometry();
 var systemJumpGeo = new THREE.Geometry();
 var systemSystem;
@@ -22,7 +21,6 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-
 //controls
 var control = new THREE.OrbitControls( camera, renderer.domElement );
 
@@ -33,8 +31,9 @@ var stats = new Stats();
 		document.body.appendChild( stats.domElement );
 
 
-/////////////// Create Geometry ///////////////////
+/////////////// Shaders and Materials ///////////////////
 var planetTexture = THREE.ImageUtils.loadTexture( 'images/disc.png' );
+
 var customUniforms =
 {
 	texture: {type: "t", value: planetTexture },
@@ -44,10 +43,29 @@ var customAttributes =
 {
 	customColor: { type: "c", value: [] },
 };
+				
+var vertexShader = "attribute vec3 customColor; varying vec3 vColor; " + 
+	"void main(){ vColor = customColor; vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );" +
+	"gl_PointSize = 10.0 * (300.0 / length (mvPosition.xyz ) ); gl_Position = projectionMatrix * mvPosition; }";
 
-//lines
+var fragmentShader = "uniform sampler2D texture; varying vec3 vColor; void main() { gl_FragColor = vec4 (vColor, 1.0);" +
+	"gl_FragColor = gl_FragColor * texture2D ( texture, gl_PointCoord );}";
+
+
+var systemMat = new THREE.ShaderMaterial (
+{
+	uniforms: customUniforms,
+	attributes: customAttributes,
+	vertexShader: document.getElementById( 'vertexshader' ).textContent,
+	fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+	transparent: true,
+	alphaTest: 0.5
+});
+
 var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4, linewidth: 1 } );
 
+
+/////////////// Build the Geometry ///////////////////
 
 for (var jump in jumps){
 
@@ -67,30 +85,23 @@ for (var jump in jumps){
 
 var v = 0;
 for (var system in system_list){
-	systemSystemGeo.vertices.push(new THREE.Vector3(Number(system_list[system].x), Number(system_list[system].y), Number(system_list[system].z)));
-	customAttributes.customColor.value[ v ]	= new THREE.Color( v * 10000 );
+	systemSystemGeo.vertices.push(new THREE.Vector3(system_list[system].x, system_list[system].y, system_list[system].z));
+	
+	var security_level = solarSystemColour(system_list[system].security);
+	
+	customAttributes.customColor.value[ v ]	=  new THREE.Color(security_level);
 	v++;
 }
 
-
-var systemMat = new THREE.ShaderMaterial (
-	{
-		uniforms: customUniforms,
-		attributes: customAttributes,
-		vertexShader: document.getElementById( 'vertexshader' ).textContent,
-		fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-		transparent: true,
-		alphaTest: 0.5
-	});
-
+systemSystem = new THREE.ParticleSystem( systemSystemGeo, systemMat );
+systemSystem.sortParticles = true;
+scene.add(systemSystem);
 
 var line = new THREE.Line( systemJumpGeo, linematerial, THREE.LinePieces );
 line.updateMatrix();
 scene.add( line );
 
-systemSystem = new THREE.ParticleSystem( systemSystemGeo, systemMat );
-systemSystem.sortParticles = true;
-scene.add(systemSystem);
+
 
 
 /////////////// Register Events ///////////////////
@@ -98,17 +109,37 @@ scene.add(systemSystem);
 window.addEventListener( 'resize', onWindowResize, false );
 
 
+function solarSystemColour(security)
+{
+	var value = Number(security);
+	
+	if(value > 0.9){
+		return 0x0404B4;
+	}
+	else if (value < 0.9 && value >= 0.7){
+		return 0x04B404;
+	}
+	else if (value < 0.7 && value >= 0.5){
+		return 0xFFFF00;
+	}
+	else if (value < 0.5 && value >= 0.0){
+		return 0xFE9A2E;
+	}
+	else if(value < 0.0){
+		return 0xFF0000;
+	}
+
+}
+
 function animate() {
 	requestAnimationFrame( animate );
-
+	stats.update();
 	update();
-
 	render();
 }
 
 function update() {
-	stats.update();
-
+	
 	updateInput();
 }
 
