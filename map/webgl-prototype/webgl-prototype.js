@@ -115,8 +115,14 @@ function solarSystemColour(security)
 {
 	var value = Number(security);
 	
-	if(value > 0.5){
+	if(value > 0.9){
 		return 0x0404B4; // 263348
+	}
+	else if (value < 0.9 && value >= 0.7){
+		return 0x04B404;
+	}
+	else if (value < 0.7 && value >= 0.5){
+		return 0xFFFF00;
 	}
 	else if (value < 0.5 && value >= 0.0){
 		return 0xFE9A2E;
