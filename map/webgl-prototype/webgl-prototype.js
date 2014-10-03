@@ -67,6 +67,8 @@ var linematerial = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.4,
 
 /////////////// Build the Geometry ///////////////////
 
+// Add the Stargate links
+
 for (var jump in jumps){
 
 	var tox, toy, toz, fromx, fromy, fromz;
@@ -82,6 +84,7 @@ for (var jump in jumps){
 	systemJumpGeo.vertices.push(new THREE.Vector3(tox, toy, toz));
 }
 
+// Add the Solar Systems
 
 var v = 0;
 for (var system in system_list){
@@ -93,6 +96,8 @@ for (var system in system_list){
 	v++;
 }
 
+// Add the geometries to the scene
+
 systemSystem = new THREE.ParticleSystem( systemSystemGeo, systemMat );
 systemSystem.sortParticles = true;
 scene.add(systemSystem);
@@ -100,8 +105,6 @@ scene.add(systemSystem);
 var line = new THREE.Line( systemJumpGeo, linematerial, THREE.LinePieces );
 line.updateMatrix();
 scene.add( line );
-
-
 
 
 /////////////// Register Events ///////////////////
@@ -122,10 +125,10 @@ function solarSystemColour(security)
 	else if (value < 0.7 && value >= 0.5){
 		return 0xFFFF00;
 	}
-	else if (value < 0.5 && value >= 0.0){
+	else if (value < 0.5 && value > 0.0){
 		return 0xFE9A2E;
 	}
-	else if(value < 0.0){
+	else if(value <= 0.0){
 		return 0xFF0000;
 	}
 
